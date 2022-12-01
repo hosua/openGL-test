@@ -8,5 +8,5 @@ filename=$(basename -- "$src")
 ext="${filename##*.}"
 filename="${filename%.*}"
 
-echo "Compiled $filename.cc -> $filename"
-g++ "$src" -lGL -lglut -lGLU -lGLEW -lglfw -o "$filename"
+echo "Compiled $filename.cc -> $filename.out"
+g++ "$src" -lGL -lglut -lGLU -lGLEW -lglfw -o "$filename.out"
