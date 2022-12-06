@@ -59,7 +59,7 @@ ostream& operator<<(ostream& out, const rgb& color) {
 }
 
 class Square {
-   private:
+private:
     vec2f mat[4];
     rgb color;
 
@@ -67,7 +67,7 @@ class Square {
     int x_dir, y_dir;
     GLfloat rot_vel, rot_dir;
 
-   public:
+public:
     // Easy access variables for square matrix
     GLfloat &x1 = mat[0].x, &y1 = mat[0].y;  // bottom-left
     GLfloat &x2 = mat[1].x, &y2 = mat[1].y;  // top-left
