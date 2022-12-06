@@ -2,6 +2,6 @@
 
 Playing around with openGL.
 
-![Square](img/sq-1.gif)
+![Square](img/sq-3.gif)
 
 ![Triangle](img/tri-1.gif)

@@ -24,7 +24,11 @@ using namespace std;
 
 // For random GLfloats
 std::default_random_engine rng(time(0));
-std::uniform_real_distribution<GLfloat> dist(0.0, 1.0);
+std::uniform_real_distribution<GLfloat> col_dist(0.0, 1.0);
+std::uniform_real_distribution<GLfloat> pos_dist(-0.7, 0.7);
+std::uniform_real_distribution<GLfloat> vel_dist(0.001f, 0.015f);
+std::uniform_real_distribution<GLfloat> rot_dist(0.4f, 1.0f);
+std::uniform_real_distribution<GLfloat> size_dist(0.1f, 0.3f);
 
 GLfloat degToRad(float f) { return f * (M_PI / 180.0f); }
 
@@ -119,6 +123,10 @@ class Square {
         rot_dir = dir;
     }
 
+	void setPos(GLfloat x, GLfloat y){ 
+        for (vec2f& vec : mat) { vec.x += x; vec.y += y; }
+	}
+
     void setVelX(GLfloat vel) { x_vel = vel; }
     void setVelY(GLfloat vel) { y_vel = vel; }
     void setVelRot(GLfloat vel) { rot_vel = vel; }
@@ -142,7 +150,6 @@ class Square {
         // Perform rotation
         for (vec2f& vec : mat) {
             GLfloat theta = rot_vel * rot_dir;
-            // printf("%f %f %f\n", rot_vel, rot_dir, theta);
             GLfloat nx =
                 vec.x * cos(degToRad(theta)) - vec.y * sin(degToRad(theta));
             GLfloat ny =
@@ -193,9 +200,9 @@ class Square {
     }
 
     void randomizeColor() {
-        color.r = dist(rng);
-        color.g = dist(rng);
-        color.b = dist(rng);
+        color.r = col_dist(rng);
+        color.g = col_dist(rng);
+        color.b = col_dist(rng);
         cout << color << endl;
     }
 
@@ -212,6 +219,23 @@ vector<Square> makeSquares(size_t count){
     while(count--)
         v.push_back(Square(0.25, 0.01, 0.008f, 1, 1, 0.5f, -1));
     return v;
+}
+
+int randDir(){
+	return (col_dist(rng) < 0.5f) ? -1 : 1;
+}
+
+vector<Square*> genSquares(size_t n){
+	vector<Square*> vec;
+	for (int i = 0; i < 5; i++){
+		Square *s = new Square(size_dist(rng), // scalar size
+						vel_dist(rng), vel_dist(rng), // x_vel, y_vel
+						randDir(), randDir(), // x_dir, y_dir
+						rot_dist(rng), randDir()); // rot_vel, rot_dir
+		s->setPos(0.5, -0.5);
+		vec.push_back(s);
+	}
+	return vec;
 }
 
 // Initializes GLUT, the display mode, and main window; registers callbacks;
@@ -234,22 +258,20 @@ int main(int argc, char** argv) {
         cout << "glew error!\n";
     }
 
-    Square sq = Square(0.25,  // scalar
-                        0.01f, 0.008f, // x_vel, y_vel,
-                        1, 1, // x_dir, y_dir 
-                        0.5f, -1);   // rot_vel, rot_dir
-
+	vector<Square*> vec = genSquares(5);
 
     // Run event loop until user closes window
     while (!glfwWindowShouldClose(window)) {
         // render here
         glClear(GL_COLOR_BUFFER_BIT);
         glBegin(GL_QUADS);
-        sq.draw();
-        sq.printPos();
-        sq.rotate();
-        sq.move();
-        sq.update();
+		for (Square* sq : vec){
+			sq->draw();
+			sq->printPos();
+			sq->rotate();
+			sq->move();
+			sq->update();
+		}
 
         glEnd();
 

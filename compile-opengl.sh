@@ -9,4 +9,5 @@ ext="${filename##*.}"
 filename="${filename%.*}"
 
 echo "Compiled $filename.cc -> $filename.out"
-g++ "$src" -lGL -lglut -lGLU -lGLEW -lglfw -o "$filename.out"
+g++ "$src" -lGL -lglut -lGLU -lGLEW -lglfw -o "$filename.out" && ./"$filename.out"
+
